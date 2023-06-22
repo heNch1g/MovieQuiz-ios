@@ -65,7 +65,7 @@ final class MovieQuizViewController: UIViewController {
             Количество сыгранных квизов: \(statisticService.gamesCount)
             Ваш результат: \(correctAnswers)\\\(questionAmount)
             Рекорд: \(bestGame.correct)\\\(bestGame.total) \(bestGame.date.dateTimeString)
-            Средняя точность \(String(format: "%.2f",statisticService.totalAccuracy))
+            Средняя точность \(String(format: "%.2f",statisticService.totalAccuracy))%
             """,
             buttonText: "Сыграть ещё раз",
             completion: { [weak self] in

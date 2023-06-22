@@ -30,6 +30,18 @@ extension QuestionFactory: QuestionFactoryProtocol {
     }
 }
 
+/*
+ extension QuestionFactory: QuestionFactoryProtocol {
+     func requestNextQuestion() {
+         guard let question = questions.randomElement() else {
+             assertionFailure("no question")
+             return
+         }
+         delegate?.didRecieveQuestion(question)
+     }
+ }
+ */
+
 private let questions: [QuizQuestion] = [
     QuizQuestion(
         image: "The Godfather",
