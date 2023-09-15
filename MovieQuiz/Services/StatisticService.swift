@@ -29,7 +29,7 @@ final class StatisticServiceImplementation {
 }
 
 extension StatisticServiceImplementation: StatisticService {
-        
+    
     var gamesCount: Int {
         get  {
             userDefaults.integer(forKey: Keys.gamesCount.rawValue)
@@ -63,8 +63,8 @@ extension StatisticServiceImplementation: StatisticService {
     var bestGame: BestGame? {
         get {
             guard
-                  let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
-                  let bestGame = try? decoder.decode(BestGame.self, from: data) else {
+                let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
+                let bestGame = try? decoder.decode(BestGame.self, from: data) else {
                 return nil
             }
             return bestGame
@@ -81,14 +81,14 @@ extension StatisticServiceImplementation: StatisticService {
         self.gamesCount += 1
         let date = dateProvider()
         let currentBestGame = BestGame(correct: correct, total: total, date: date)
-     
+        
         guard let previousBestGame = bestGame else {
-                    bestGame = currentBestGame
-                    return
-                }
-                if previousBestGame > currentBestGame {
-                    bestGame = currentBestGame
-                }
+            bestGame = currentBestGame
+            return
+        }
+        if previousBestGame > currentBestGame {
+            bestGame = currentBestGame
+        }
     }
 }
 

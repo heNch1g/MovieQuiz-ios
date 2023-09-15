@@ -20,14 +20,12 @@ final class QuestionFactory {
     private var movies: [MostPopularMovie] = []
     
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
-    
+        
         self.delegate = delegate
         self.moviesLoader = moviesLoader
     }
     
-
-   
-    }
+}
 extension QuestionFactory: QuestionFactoryProtocol {
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
@@ -59,10 +57,8 @@ extension QuestionFactory: QuestionFactoryProtocol {
             }
             
             let rating = Float(movie.rating) ?? 0
-            
             let text = "Рейтинг этого фильма больше чем 7?"
             let correctAnswer = rating > 7
-            
             let question = QuizQuestion(image: imageData,
                                         text: text,
                                         correctAnswer: correctAnswer)
@@ -74,19 +70,8 @@ extension QuestionFactory: QuestionFactoryProtocol {
         }
     }
 }
-/*
-extension QuestionFactory: QuestionFactoryProtocol {
-    func requestNextQuestion() {
-        guard let question = questions.randomElement() else {
-            assertionFailure("no question")
-            return
-        }
-        delegate?.didRecieveQuestion(question)
-    }
-}
 
-
-
+/**
 private let questions: [QuizQuestion] = [
     QuizQuestion(
         image: "The Godfather",
@@ -128,5 +113,5 @@ private let questions: [QuizQuestion] = [
         image: "Vivarium",
         text: "Рейтинг этого фильма больше чем 6?",
         correctAnswer: false)
- **/
-
+    **/
+    
