@@ -57,7 +57,7 @@ final class QuestionFactory {
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                presenter.didRecieveNextQuestion(question: question)
+                presenter.didReceiveNextQuestion(question: question)
             }
         }
     }

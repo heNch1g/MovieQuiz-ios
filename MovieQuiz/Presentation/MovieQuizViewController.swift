@@ -1,6 +1,11 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+    func didReceiveNextQuestion(_ question: QuizQuestion) {
+        presenter.didReceiveNextQuestion(question: question)
+    }
+    
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,13 +105,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showNextQuestionOrResults() {
-        
         if presenter.isLastQuestion() {
             showAlert()
         } else {
             presenter.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
-            //questionFactory?.loadData()
         }
     }
     
@@ -126,10 +129,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             self.yesButton.isEnabled = true
         }
     }
-    func didRecieveNextQuestion(question: QuizQuestion?) {
-        presenter.didReceiveNextQuestion(question: question)
-        }
-        
+    
     func didLoadDataFromServer() {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
         questionFactory?.requestNextQuestion()
