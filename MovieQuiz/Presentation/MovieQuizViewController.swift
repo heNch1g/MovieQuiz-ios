@@ -4,6 +4,7 @@ final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewController = self
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
@@ -28,16 +29,17 @@ final class MovieQuizViewController: UIViewController {
     //private let questionAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var alertPresenter: AlertPresenterProtocol?
-    private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticService?
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion?.correctAnswer)}
+        presenter.currentQuestion = currentQuestion
+        presenter.noButtonClicked()
+    }
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion?.correctAnswer)}
+        presenter.currentQuestion = currentQuestion
+        presenter.yesButtonClicked()
+    }
     
     private func showLoadingIndicator() {
         activityIndicator.isHidden = false
@@ -112,7 +114,7 @@ final class MovieQuizViewController: UIViewController {
         }
     }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
@@ -140,7 +142,6 @@ extension MovieQuizViewController: QuestionFactoryDelegate {
     func didLoadDataFromServer() {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
         questionFactory?.requestNextQuestion()
-        //questionFactory?.loadData()
     }
     
     func didFailToLoadData(with error: Error) {
