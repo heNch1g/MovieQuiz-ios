@@ -18,6 +18,9 @@ final class QuestionFactory {
         self.delegate = delegate
         self.moviesLoader = moviesLoader
     }
+    
+}
+extension QuestionFactory: QuestionFactoryProtocol {
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async {
@@ -32,7 +35,6 @@ final class QuestionFactory {
             }
         }
     }
-    
     func requestNextQuestion() {
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
@@ -57,12 +59,11 @@ final class QuestionFactory {
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                presenter.didReceiveNextQuestion(question: question)
+                self.delegate?.didReceiveNextQuestion(question)
             }
         }
     }
 }
-
 
 /**
 private let questions: [QuizQuestion] = [
