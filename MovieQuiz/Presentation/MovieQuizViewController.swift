@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -9,7 +9,7 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self) as? any QuestionFactoryProtocol
         questionFactory?.loadData()
         showLoadingIndicator()
         alertPresenter = AlertPresenter(delegate: self)
@@ -23,7 +23,7 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var textLabel: UILabel!
     
-    private let presenter = MovieQuizPresenter()
+    public let presenter = MovieQuizPresenter()
    // private var currentQuestionIndex = 0
     private var correctAnswers = 0
     //private let questionAmount: Int = 10
@@ -32,12 +32,10 @@ final class MovieQuizViewController: UIViewController {
     private var statisticService: StatisticService?
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.noButtonClicked()
     }
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.yesButtonClicked()
     }
     
@@ -65,9 +63,7 @@ final class MovieQuizViewController: UIViewController {
         alertPresenter?.showQuizResult(model: model)
     }
     
-
-    
-    private func show(quiz step: QuizStepViewModel) {
+    func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
@@ -130,15 +126,10 @@ final class MovieQuizViewController: UIViewController {
             self.yesButton.isEnabled = true
         }
     }
-}
-
-extension MovieQuizViewController: QuestionFactoryDelegate {
-    func didReceiveNextQuestion(_ question: QuizQuestion) {
-        self.currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        self.show(quiz: viewModel)
-    }
-    
+    func didRecieveNextQuestion(question: QuizQuestion?) {
+        presenter.didReceiveNextQuestion(question: question)
+        }
+        
     func didLoadDataFromServer() {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
         questionFactory?.requestNextQuestion()
@@ -147,6 +138,5 @@ extension MovieQuizViewController: QuestionFactoryDelegate {
     func didFailToLoadData(with error: Error) {
         showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
     }
-    
-    
 }
+
