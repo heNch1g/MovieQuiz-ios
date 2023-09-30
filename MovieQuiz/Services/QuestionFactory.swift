@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class QuestionFactory {
+final class QuestionFactory: QuestionFactoryProtocol {
     private weak var delegate: QuestionFactoryDelegate?
     private let moviesLoader: MoviesLoading
     private var movies: [MostPopularMovie] = []
@@ -18,9 +18,6 @@ final class QuestionFactory {
         self.delegate = delegate
         self.moviesLoader = moviesLoader
     }
-    
-}
-extension QuestionFactory: QuestionFactoryProtocol {
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async {
@@ -41,7 +38,7 @@ extension QuestionFactory: QuestionFactoryProtocol {
             let index = (0..<self.movies.count).randomElement() ?? 0
             
             guard let movie = self.movies[safe: index] else { return }
-            
+             
             var imageData = Data()
             
             do {
@@ -64,6 +61,7 @@ extension QuestionFactory: QuestionFactoryProtocol {
         }
     }
 }
+
 
 /**
 private let questions: [QuizQuestion] = [

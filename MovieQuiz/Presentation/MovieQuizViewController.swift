@@ -14,7 +14,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self) as? any QuestionFactoryProtocol
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
         showLoadingIndicator()
         alertPresenter = AlertPresenter(delegate: self)
