@@ -8,14 +8,24 @@
 import Foundation
 import UIKit
 
-final class MovieQuizPresenter {
+final class MovieQuizPresenter: QuestionFactoryDelegate {
+    
+    
+    var currentQuestion: QuizQuestion?
+    private var questionFactory: QuestionFactoryProtocol?
+    private weak var viewController: MovieQuizViewController?
     let questionAmount: Int = 10
     private var currentQuestionIndex: Int = 0
-    var currentQuestion: QuizQuestion?
-    weak var viewController: MovieQuizViewController?
-    var questionFactory: QuestionFactoryProtocol?
     var correctAnswers: Int = 0
 
+    init(viewController: MovieQuizViewController) {
+           self.viewController = viewController
+           
+           questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+           questionFactory?.loadData()
+           viewController.showLoadingIndicator()
+       }
+    
     func isLastQuestion() -> Bool {
            currentQuestionIndex == questionAmount - 1
        }
@@ -53,13 +63,17 @@ final class MovieQuizPresenter {
             viewController?.showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
         }
     
-    func didReceiveNextQuestion(question: QuizQuestion?) {
+    func didReceiveNextQuestion(_ question: QuizQuestion?) {
         guard let question = question else {
-                   return
-               }
+            return
+        }
+        
         currentQuestion = question
         let viewModel = convert(model: question)
-        viewController?.show(quiz: viewModel)
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.show(quiz: viewModel)
+        }
+
     }
     
     func showNextQuestionOrResults() {
@@ -70,5 +84,20 @@ final class MovieQuizPresenter {
             questionFactory?.requestNextQuestion()
         }
     }
-
+    
+    func didLoadDataFromServer() {
+        viewController?.hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        let message = error.localizedDescription
+        viewController?.showNetworkError(message: message)
+    }
+    
+    func restartGame() {
+            currentQuestionIndex = 0
+            correctAnswers = 0
+            questionFactory?.requestNextQuestion()
+        }
 }

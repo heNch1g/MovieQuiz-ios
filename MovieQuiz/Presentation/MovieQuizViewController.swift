@@ -1,21 +1,22 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController {
+   /*D
     func didReceiveNextQuestion(_ question: QuizQuestion) {
         presenter.didReceiveNextQuestion(question: question)
     }
-    
-    
+    */
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewController = self
+        presenter = MovieQuizPresenter(viewController: self)
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        questionFactory?.loadData()
+       //D questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+       //D questionFactory?.loadData()
         showLoadingIndicator()
         alertPresenter = AlertPresenter(delegate: self)
         statisticService = StatisticServiceImplementation()
@@ -29,7 +30,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var textLabel: UILabel!
     
-    public let presenter = MovieQuizPresenter()
+    private var presenter: MovieQuizPresenter!
+
    // private var currentQuestionIndex = 0
    // private var correctAnswers = 0
     //private let questionAmount: Int = 10
@@ -45,17 +47,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         presenter.yesButtonClicked()
     }
     
-    private func showLoadingIndicator() {
+     func showLoadingIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
     
-    private func hideLoadingIndicator() {
+     func hideLoadingIndicator() {
         activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
     }
     
-    private func showNetworkError(message: String) {
+     func showNetworkError(message: String) {
         hideLoadingIndicator()
         
         let model = AlertModel(title: "Ошибка", message: message, buttonText: "Попробывать еще раз") { [weak self] in
@@ -63,7 +65,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             
             self.presenter.resetQuestionIndex()
             presenter.correctAnswers = 0
-            self.questionFactory?.requestNextQuestion()
+            //Dself.questionFactory?.requestNextQuestion()
+            self.presenter.restartGame()
+
             // self.questionFactory?.loadData()
         }
         alertPresenter?.showQuizResult(model: model)
@@ -95,10 +99,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             """,
             buttonText: "Сыграть ещё раз",
             completion: { [weak self] in
-                self?.presenter.resetQuestionIndex()
-                self?.presenter.correctAnswers = 0
+            //D    self?.presenter.resetQuestionIndex()
+             //D   self?.presenter.correctAnswers = 0
                 //self?.questionFactory?.loadData()
-                self?.questionFactory?.requestNextQuestion()
+            //D    self?.questionFactory?.requestNextQuestion()
+                self?.presenter.restartGame()
             })
         alertPresenter?.showQuizResult(model: alertModel)
     }
@@ -115,13 +120,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
            // self.presenter.correctAnswers = self.correctAnswers
-            self.presenter.questionFactory = self.questionFactory
+           // self.presenter.questionFactory = self.questionFactory
             self.presenter.showNextQuestionOrResults()
             self.noButton.isEnabled = true
             self.yesButton.isEnabled = true
         }
     }
-    
+    /*D
     func didLoadDataFromServer() {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
         questionFactory?.requestNextQuestion()
@@ -130,5 +135,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     func didFailToLoadData(with error: Error) {
         showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
     }
+     */
 }
 
