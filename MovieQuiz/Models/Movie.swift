@@ -7,13 +7,14 @@
 
 import Foundation
 
-public struct Actor: Codable {
+struct Actor: Codable {
     let id: String
     let image: String
     let name: String
     let asCharacter: String
 }
-public struct Movie: Codable {
+
+struct Movie: Codable {
     let id: String
     let title: String
     let year: Int

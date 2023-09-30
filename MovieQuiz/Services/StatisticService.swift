@@ -7,6 +7,13 @@
 
 import Foundation
 
+protocol StatisticService {
+    var totalAccuracy: Double { get }
+    var gamesCount: Int { get }
+    var bestGame: GameRecord? { get }
+    func store(correct: Int, total: Int)
+}
+
 final class StatisticServiceImplementation {
     private let userDefaults: UserDefaults
     private let decoder: JSONDecoder
@@ -60,11 +67,11 @@ extension StatisticServiceImplementation: StatisticService {
         }
     }
     
-    var bestGame: BestGame? {
+    var bestGame: GameRecord? {
         get {
             guard
                 let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
-                let bestGame = try? decoder.decode(BestGame.self, from: data) else {
+                let bestGame = try? decoder.decode(GameRecord.self, from: data) else {
                 return nil
             }
             return bestGame
@@ -80,7 +87,7 @@ extension StatisticServiceImplementation: StatisticService {
         self.total += total
         self.gamesCount += 1
         let date = dateProvider()
-        let currentBestGame = BestGame(correct: correct, total: total, date: date)
+        let currentBestGame = GameRecord(correct: correct, total: total, date: date)
         
         guard let previousBestGame = bestGame else {
             bestGame = currentBestGame
@@ -92,22 +99,3 @@ extension StatisticServiceImplementation: StatisticService {
     }
 }
 
-struct BestGame: Codable {
-    let correct: Int
-    let total: Int
-    let date: Date
-}
-
-extension BestGame: Comparable {
-    private var accuracy: Double {
-        guard total != 0 else {
-            return 0
-        }
-        return Double(correct) / Double(total)
-        
-    }
-    static func < (lhs: BestGame, rhs: BestGame) -> Bool {
-        lhs.accuracy > rhs.accuracy
-        // исправил < на >
-    }
-}
