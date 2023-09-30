@@ -13,7 +13,9 @@ final class MovieQuizPresenter {
     private var currentQuestionIndex: Int = 0
     var currentQuestion: QuizQuestion?
     weak var viewController: MovieQuizViewController?
-    
+    var questionFactory: QuestionFactoryProtocol?
+    var correctAnswers: Int = 0
+
     func isLastQuestion() -> Bool {
            currentQuestionIndex == questionAmount - 1
        }
@@ -59,4 +61,14 @@ final class MovieQuizPresenter {
         let viewModel = convert(model: question)
         viewController?.show(quiz: viewModel)
     }
+    
+    func showNextQuestionOrResults() {
+        if self.isLastQuestion() {
+            viewController?.showAlert()
+        } else {
+            self.switchToNextQuestion()
+            questionFactory?.requestNextQuestion()
+        }
+    }
+
 }

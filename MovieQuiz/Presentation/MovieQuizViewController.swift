@@ -76,7 +76,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderWidth = 0
     }
     
-    private func showAlert() {
+    func showAlert() {
         statisticService?.store(correct: correctAnswers, total: presenter.questionAmount)
         guard let statisticService = statisticService else {
             assertionFailure("error 1")
@@ -103,15 +103,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter?.showQuizResult(model: alertModel)
     }
     
-    private func showNextQuestionOrResults() {
-        if presenter.isLastQuestion() {
-            showAlert()
-        } else {
-            presenter.switchToNextQuestion()
-            questionFactory?.requestNextQuestion()
-        }
-    }
-    
     func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
@@ -123,7 +114,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            self.showNextQuestionOrResults()
+            self.presenter.correctAnswers = self.correctAnswers
+            self.presenter.questionFactory = self.questionFactory
+            self.presenter.showNextQuestionOrResults()
             self.noButton.isEnabled = true
             self.yesButton.isEnabled = true
         }
