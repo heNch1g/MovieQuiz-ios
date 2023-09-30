@@ -18,7 +18,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory?.loadData()
         showLoadingIndicator()
         alertPresenter = AlertPresenter(delegate: self)
-        statisticService = StatisticServiceImplementation(userDefaults: Foundation.UserDefaults.standard,decoder: JSONDecoder(), encoder: JSONEncoder(), dateProvider: { Date() } )
+        statisticService = StatisticServiceImplementation()
+
     }
     
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
@@ -81,10 +82,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             assertionFailure("error 1")
             return
         }
-        guard let bestGame = statisticService.bestGame else {
-            assertionFailure("error 2")
-            return
-        }
+        let bestGame = statisticService.bestGame
+
         let alertModel = AlertModel(
             title: "Этот раунд окончен!",
             message:
