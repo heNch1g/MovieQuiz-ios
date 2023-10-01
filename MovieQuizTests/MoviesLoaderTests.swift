@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import XCTest // не забывайте импортировать фреймворк для тестирования
 @testable import MovieQuiz // импортируем приложение для тестирования
 
@@ -15,10 +14,8 @@ class MoviesLoaderTests: XCTestCase {
         // Given
         let stubNetworkClient = StubNetworkClient(emulateError: false) // говорим, что не хотим эмулировать ошибку
         let loader = MoviesLoader(networkClient: stubNetworkClient)
-        
         // When
         let expectation = expectation(description: "Loading expectation")
-        
         loader.loadMovies { result in
             // Then
             switch result {
@@ -30,7 +27,6 @@ class MoviesLoaderTests: XCTestCase {
                 XCTFail("Unexpected failure")
             }
         }
-        
         waitForExpectations(timeout: 1)
     }
     
@@ -38,10 +34,8 @@ class MoviesLoaderTests: XCTestCase {
         // Given
         let stubNetworkClient = StubNetworkClient(emulateError: true) // говорим, что хотим эмулировать ошибку
         let loader = MoviesLoader(networkClient: stubNetworkClient)
-        
         // When
         let expectation = expectation(description: "Loading expectation")
-        
         loader.loadMovies { result in
             // Then
             switch result {
@@ -52,14 +46,11 @@ class MoviesLoaderTests: XCTestCase {
                 XCTFail("Unexpected failure")
             }
         }
-        
         waitForExpectations(timeout: 1)
     }
 }
 
-
 struct StubNetworkClient: NetworkRouting {
-    
     enum TestError: Error { // тестовая ошибка
     case test
     }

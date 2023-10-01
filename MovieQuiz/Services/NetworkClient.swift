@@ -33,7 +33,6 @@ struct NetworkClient: NetworkRouting {
                 handler(.failure(NetworkError.codeError))
                 return
             }
-            
             // Возвращаем данные
             guard let data = data else { return }
             handler(.success(data))

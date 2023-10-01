@@ -12,15 +12,10 @@ import UIKit
 
 final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func show(quiz step: QuizStepViewModel) {}
-    
     func show(quiz result: QuizResultsViewModel) {}
-    
     func highlightImageBorder(isCorrectAnswer: Bool) {}
-    
     func showLoadingIndicator() {}
-    
     func hideLoadingIndicator() {}
-    
     func showNetworkError(message: String) {}
 }
 
@@ -38,7 +33,6 @@ final class MovieQuizPresenterTests: XCTestCase {
            XCTAssertEqual(viewModel.question, "Question Text")
            XCTAssertEqual(viewModel.questionNumber, "1/10")
        }
-
 }
 
 

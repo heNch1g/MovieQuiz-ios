@@ -1,8 +1,6 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
-    
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -12,7 +10,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.cornerRadius = 20
         presenter = MovieQuizPresenter(viewController: self)
         showLoadingIndicator()
-        alertPresenter = AlertPresenter(delegate: self)
     }
     
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
@@ -23,8 +20,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBOutlet private weak var textLabel: UILabel!
     
     private var presenter: MovieQuizPresenter!
-    private var questionFactory: QuestionFactoryProtocol?
-    private var alertPresenter: AlertPresenterProtocol?
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         presenter.noButtonClicked()
@@ -52,7 +47,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func showNetworkError(message: String) {
         hideLoadingIndicator()
-        
         let alert = UIAlertController(
                    title: "Ошибка",
                    message: message,
@@ -76,20 +70,15 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func show(quiz result: QuizResultsViewModel) {
         let message = presenter.makeResultsMessage()
-        
         let alert = UIAlertController(
             title: result.title,
             message: message,
             preferredStyle: .alert)
-        
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
-            
             self.presenter.restartGame()
         }
-        
         alert.addAction(action)
-        
         self.present(alert, animated: true, completion: nil)
     }
 }
