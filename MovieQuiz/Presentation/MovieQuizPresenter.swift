@@ -18,16 +18,14 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var correctAnswers: Int = 0
     private weak var viewController: MovieQuizViewControllerProtocol?
     
+    var alertPresenter: AlertPresenter?
+    
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
         viewController.showLoadingIndicator()
-    }
-    
-    func isLastQuestion() -> Bool {
-        currentQuestionIndex == questionAmount - 1
     }
     
     func resetQuestionIndex() {
@@ -52,6 +50,21 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         return resultMessage
     }
     
+    func showNetworkError(message: String) {
+        viewController?.hideLoadingIndicator()
+        let model = AlertModel(title: "Ошибка",
+                               message: message,
+                               buttonText: "Попробовать еще раз") { [weak self] in
+            guard let self = self else { return }
+            
+            currentQuestionIndex = 0
+            correctAnswers = 0
+            questionFactory?.requestNextQuestion()
+        }
+        
+        alertPresenter?.showQuizResult(model: model)
+    }
+    
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel (
             image: UIImage(data: model.image) ?? UIImage(),
@@ -73,14 +86,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         didAnswer(isYes: false)
     }
     
-    private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = isYes
-        proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-    }
-    
     func didReceiveNextQuestion(_ question: QuizQuestion?) {
         guard let question = question else {
             return
@@ -93,7 +98,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func proceedToNextQuestionOrResults() {
-        if self.isLastQuestion() {
+        if isLastQuestion() {
             let text = correctAnswers == self.questionAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
@@ -102,10 +107,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 text: text,
                 buttonText: "Сыграть ещё раз")
             viewController?.show(quiz: viewModel)        } else {
-                self.switchToNextQuestion()
+                switchToNextQuestion()
                 questionFactory?.requestNextQuestion()
             }
     }
+    
     
     func didLoadDataFromServer() {
         viewController?.hideLoadingIndicator()
@@ -114,15 +120,29 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func didFailToLoadData(with error: Error) {
         let message = error.localizedDescription
-        viewController?.showNetworkError(message: message)
+        showNetworkError(message: message)
     }
     
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswers = 0
-        questionFactory?.requestNextQuestion()
+        questionFactory?.loadData()
+       //questionFactory?.requestNextQuestion()
     }
-    
+/*
+    func showNetworkError(alertViewModel: AlertModel) {
+        viewController?.hideLoadingIndicator()
+            let model = AlertModel(title: "Ошибка",
+                                   message: "23",
+                                   buttonText: "Попробовать еще раз") { [weak self] in
+                guard let self = self else {return}
+               // questionFactory?.requestNextQuestion()
+                restartGame()
+            }
+            
+        alertPresenter?.showQuizResult(model: model)
+        }
+*/
     func proceedWithAnswer(isCorrect: Bool) {
         didAnswer(isCorrectAnswer: isCorrect)
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
@@ -130,6 +150,18 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             guard let self = self else { return }
             self.proceedToNextQuestionOrResults()
         }
+    }
+    
+    private func didAnswer(isYes: Bool) {
+        guard let currentQuestion = currentQuestion else {
+            return
+        }
+        let givenAnswer = isYes
+        proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+    }
+    
+    private func isLastQuestion() -> Bool {
+        currentQuestionIndex == questionAmount - 1
     }
 }
 

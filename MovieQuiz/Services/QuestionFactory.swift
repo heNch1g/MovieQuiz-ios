@@ -12,7 +12,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
     private weak var delegate: QuestionFactoryDelegate?
     private let moviesLoader: MoviesLoading
     private var movies: [MostPopularMovie] = []
-    
+
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
         
         self.delegate = delegate
