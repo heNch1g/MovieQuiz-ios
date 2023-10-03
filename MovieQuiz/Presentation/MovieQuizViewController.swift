@@ -9,7 +9,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var textLabel: UILabel!
     
-    private var statisticService: StatisticService?
+  //  private var statisticService: StatisticService?
     private var presenter: MovieQuizPresenter!
     
     // MARK: - Lifecycle

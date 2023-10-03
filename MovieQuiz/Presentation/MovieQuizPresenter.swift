@@ -99,14 +99,15 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func proceedToNextQuestionOrResults() {
         if isLastQuestion() {
-            let text = correctAnswers == self.questionAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
+            // let text = correctAnswers == self.questionAmount ?
+          //  "Поздравляем, вы ответили на 10 из 10!" :
+          //  "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
             let viewModel = QuizResultsViewModel(
                 title: "Этот раунд окончен!",
-                text: text,
+                text: makeResultsMessage(),
                 buttonText: "Сыграть ещё раз")
-            viewController?.show(quiz: viewModel)        } else {
+                viewController?.show(quiz: viewModel) }
+            else {
                 switchToNextQuestion()
                 questionFactory?.requestNextQuestion()
             }
