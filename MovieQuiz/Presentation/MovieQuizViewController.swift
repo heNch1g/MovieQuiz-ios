@@ -1,17 +1,16 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
-    
-    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet private var noButton: UIButton!
-    @IBOutlet private var yesButton: UIButton!
-    @IBOutlet private var imageView: UIImageView!
+
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var textLabel: UILabel!
     
-  //  private var statisticService: StatisticService?
-    private var presenter: MovieQuizPresenter!
-    
+    private var presenter: MovieQuizPresenter?
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,8 +19,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.cornerRadius = 20
         presenter = MovieQuizPresenter(viewController: self)
-        showLoadingIndicator()
         activityIndicator.hidesWhenStopped = true
+        showLoadingIndicator()
     }
     
     func showLoadingIndicator() {
@@ -29,51 +28,28 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     func hideLoadingIndicator() {
-        activityIndicator.stopAnimating()
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+        }
     }
     
-    func highlightImageBorder(isCorrectAnswer: Bool) {
+    func showBorderResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
-        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-    }
-/*
-    func showNetworkError(message: String) {
-        hideLoadingIndicator()
-        let alert = UIAlertController(
-                   title: "Ошибка",
-                   message: message,
-                   preferredStyle: .alert)
-
-                   let action = UIAlertAction(title: "Попробовать ещё раз",
-                   style: .default) { [weak self] _ in
-                       guard let self = self else { return }
-                       self.presenter.restartGame()
-                   }
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
-
-    }
-   
-    private func showNetworkError(message: String) {
-        hideLoadingIndicator()
-        let model = AlertModel(title: "Ошибка",
-                               message: message,
-                               buttonText: "Попробовать еще раз") { [weak self] in
-            guard let self = self else { return }
-            
-            presenter.currentQuestionIndex = 0
-            presenter.correctAnswers = 0
-            questionFactory?.requestNextQuestion()
-        }
-        
-        alertPresenter?.showQuizResult(model: model)
-    } */
-    
-    internal func showNetworkError(message: String) {
-        presenter.showNetworkError(message: message)
+        imageView.layer.cornerRadius = 20
+        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
     
+    func isHideBorder() {
+        imageView.layer.borderWidth = 0
+        imageView.image = nil
+    }
+    
+    func isEnabledButtons(_ isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
+    }
+
     func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
@@ -81,27 +57,12 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.borderWidth = 0
     }
 
-    
-    func show(quiz result: QuizResultsViewModel) {
-        let message = presenter.makeResultsMessage()
-        let alert = UIAlertController(
-            title: result.title,
-            message: message,
-            preferredStyle: .alert)
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.presenter.restartGame()
-        }
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
-    }
-
-    @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.noButtonClicked()
+    @IBAction private func noButtonClicked(_ sender: Any) {
+        presenter?.noButtonClicked()
     }
     
-    @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.yesButtonClicked()
+    @IBAction private func yesButtonClicked(_ sender: Any) {
+        presenter?.yesButtonClicked()
     }
 }
 

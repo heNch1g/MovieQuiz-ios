@@ -8,12 +8,18 @@
 import Foundation
 
 struct GameRecord: Codable {
-    let correct: Int
-    let total: Int
-    let date: Date
-
-    func isBetterThan(_ another: GameRecord) -> Bool {
-        correct > another.correct
+    
+    var correct: Int
+    var total: Int
+    var date: Date = Date()
+    
+    func isGameRecord(correct count: Int) -> Bool {
+        if self.correct < count {
+            return false
+        }
+        else {
+            return true
+        }
     }
 }
 

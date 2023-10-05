@@ -4,14 +4,14 @@
 //
 //  Created by Alexey Volovikov on 01.10.2023.
 //
-
 import Foundation
+import UIKit
 
-protocol MovieQuizViewControllerProtocol: AnyObject {
+protocol MovieQuizViewControllerProtocol: AnyObject, UIViewController {
     func show(quiz step: QuizStepViewModel)
-    func show(quiz result: QuizResultsViewModel)
-    func highlightImageBorder(isCorrectAnswer: Bool)
     func showLoadingIndicator()
     func hideLoadingIndicator()
-    func showNetworkError(message: String)
+    func showBorderResult(isCorrect: Bool)
+    func isHideBorder()
+    func isEnabledButtons(_ isEnabled: Bool)
 }

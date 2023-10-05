@@ -6,19 +6,30 @@
 //
 
 import UIKit
-import Foundation
 
 final class AlertPresenter: AlertPresenterProtocol {
-    private weak var delegate: UIViewController?
+    private let controller: MovieQuizViewControllerProtocol
+    private weak var delegate: AlertPresenterDelegate?
     
-    init (delegate: UIViewController) {
+    init(delegate: AlertPresenterDelegate, controller: MovieQuizViewControllerProtocol) {
         self.delegate = delegate
+        self.controller = controller
     }
     
-    func showQuizResult(model: AlertModel) {
-        let alert = UIAlertController(title: model.title, message: model.message, preferredStyle: .alert)
-        let action = UIAlertAction(title: model.buttonText,style: .default) { _ in model.completion()}
-        alert.addAction(action)
-        delegate?.present(alert, animated: true, completion: nil)
+    func show(quiz result: AlertModel) {
+        let alert = UIAlertController(
+            title: result.title,
+            message: result.message,
+            preferredStyle: .alert)
+        alert.view.accessibilityIdentifier = "Game results"
+        
+        let alertAction = UIAlertAction(
+            title: result.buttonText,
+            style: .default) { _ in
+                result.completion()
+            }
+        alert.addAction(alertAction)
+        controller.present(alert, animated: true)
     }
 }
+
