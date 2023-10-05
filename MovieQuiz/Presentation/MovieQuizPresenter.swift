@@ -26,7 +26,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
         alertPresenter = AlertPresenter(delegate: self, controller: viewController)
-        questionFactory?.loadData()
     }
     
     func resetQuestionIndex() {
@@ -145,7 +144,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswers = 0
-        questionFactory?.requestNextQuestion()
+        questionFactory?.loadData()
     }
 
     private func isLastQuestion() -> Bool {
