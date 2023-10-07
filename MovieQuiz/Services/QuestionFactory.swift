@@ -42,7 +42,9 @@ final class QuestionFactory: QuestionFactoryProtocol {
             do {
                 imageData = try Data(contentsOf: movie.resizedImageURL)
             } catch {
-                self.delegate?.showNetworkErrorImage(message: error.localizedDescription)
+                DispatchQueue.main.async {
+                    self.delegate?.showNetworkErrorImage(message: error.localizedDescription)
+                }
             }
             let rating = Float(movie.rating) ?? 0
             let text = "Рейтинг этого фильма больше чем 7?"
